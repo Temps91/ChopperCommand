@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Movimiento();
         Shoot();
-
+ 
     }
     public void Movimiento()
     {
