@@ -15,8 +15,8 @@ TagManager:
   - UI
   - PlayerBullets
   - Enemy
-  - 
-  - 
+  - Player
+  - Truck
   - 
   - 
   - 
@@ -42,6 +42,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BackGround
+    uniqueID: 248663047
     locked: 0
   m_RenderingLayers:
   - Default

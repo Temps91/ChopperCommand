@@ -13,22 +13,24 @@ public class EnemieBullet : MonoBehaviour
         originalBullet.SetActive(true);
         bullet1.SetActive(false);
         bullet2.SetActive(false);
+        StartCoroutine(BulletActive());
     }
 
     public void Update()
     {
-        StartCoroutine(BulletActive());
+
         MovementBullet();
 
     }
 
     public void MovementBullet()
     {
-        if (bullet1.activeSelf)
+
+        if (bullet1 != null && bullet1.activeSelf)
         {
             bullet1.transform.Translate(Vector2.up * speedBullet * Time.deltaTime);
         }
-        if (bullet2.activeSelf)
+        if (bullet2 != null && bullet2.activeSelf)
         {
             bullet2.transform.Translate(Vector2.down * speedBullet * Time.deltaTime);
         }
@@ -38,10 +40,26 @@ public class EnemieBullet : MonoBehaviour
     IEnumerator BulletActive()
     {
         yield return new WaitForSeconds(1f);
-        originalBullet.SetActive(false);
-        bullet1.SetActive(true);
-        bullet2.SetActive(true);
+        if (this != null)
+        {
+            if (originalBullet != null)
+            {
+                originalBullet.SetActive(false);
+                bullet1.SetActive(true);
+                bullet2.SetActive(true);
+
+            }
+            else
+            {
+                bullet1.SetActive(false);
+                bullet2.SetActive(false);
+            }
+        }
+        yield return new WaitForSeconds(3f);
+        gameObject.SetActive(false);
     }
+
+
 
 
 }
