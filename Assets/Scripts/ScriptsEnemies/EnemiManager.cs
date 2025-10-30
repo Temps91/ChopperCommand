@@ -20,7 +20,7 @@ public class EnemiManager : MonoBehaviour
             int index = Random.Range(0, spawnEnemies.Length);
             Instantiate(enemieHelicopter, spawnEnemies[index].transform.position, Quaternion.identity);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(4f);
         }
     }
 

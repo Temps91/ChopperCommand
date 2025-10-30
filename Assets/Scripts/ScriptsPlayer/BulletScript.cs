@@ -18,4 +18,5 @@ public class BulletScript : MonoBehaviour
     {
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
+
 }

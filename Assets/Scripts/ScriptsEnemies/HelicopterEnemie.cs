@@ -8,38 +8,39 @@ public class HelicopterEnemie : MonoBehaviour
     public GameObject EnemieSprite1;
     public GameObject EnemieSprite2;
     public bool dirEnemieSprite;
-    public float maxPos;
-    public float minPos;
+    private float targetX = 0f;
+    private bool goingToCenter = true;
     private int direction = -1;
     private int erraticDir;
     public GameObject bulletEnemie;
     public Transform shootPointEnemie;
     public bool shoot;
+    public GameObject particlesDead;
+    private bool freeze = false;
 
     public void Start()
     {
+        particlesDead.SetActive(false);
         shoot = true;
         dirEnemieSprite = true;
         StartCoroutine(EnemieHelAnimator());
+        if (transform.position.x < 0)
+        {
+            direction = 1;
+        }
+        else
+        {
+            direction = -1;
+        }
     }
     public void Update()
     {
         DirHelicopter();
-        ShootEnemie();
+        StartCoroutine(ActivarDisparo());
     }
 
     public void DirHelicopter()
     {
-        transform.Translate(Vector2.right * direction * speed * Time.deltaTime);
-        if (transform.position.x <= minPos)
-        {
-            direction = 1;
-        }
-        else if(transform.position.x >= maxPos)
-        {
-            direction = -1;
-        }
-        transform.Translate(Vector2.up * erraticDir * erraticSpeed * Time.deltaTime);
         int index = Random.Range(0, 2);
         if (index == 1)
         {
@@ -49,6 +50,24 @@ public class HelicopterEnemie : MonoBehaviour
         {
             erraticDir = -1;
         }
+        if (!freeze)
+        {
+        transform.Translate(Vector2.up * erraticDir * erraticSpeed * Time.deltaTime);
+        transform.Translate(Vector2.right * direction * speed * Time.deltaTime);
+
+        }
+
+        if (goingToCenter && Mathf.Abs(transform.position.x - targetX) < 0.5f)
+        {
+            goingToCenter = false;
+            direction *= -1;
+        }
+        else if (!goingToCenter &&(transform.position.x < -10f && direction <0) || (transform.position.x > 10f && direction > 0))
+        {
+            goingToCenter =true;
+            direction *= -1;
+        }
+
 
 
         if (direction > 0 && !dirEnemieSprite)
@@ -71,8 +90,8 @@ public class HelicopterEnemie : MonoBehaviour
 
     public void ShootEnemie()
     {
-        int index = Random.Range(0, 8);
-        if (index == 1 && shoot)
+        int index = Random.Range(0, 5);
+        if (index == 4 && shoot)
         {
             Instantiate(bulletEnemie, shootPointEnemie.transform.position, Quaternion.identity);
             Vector2 directionBullet = dirEnemieSprite ? Vector2.right : Vector2.left;
@@ -92,5 +111,36 @@ public class HelicopterEnemie : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("PlayerBullets"))
+        {
+            freeze = true;
+
+            particlesDead.SetActive(true);
+            StopAllCoroutines();
+            EnemieSprite1.SetActive(false);
+            EnemieSprite2.SetActive(false);
+
+            StartCoroutine(DesactivarParticulas());
+
+        }
+    }
+
+    IEnumerator DesactivarParticulas()
+    {
+        yield return new WaitForSeconds(1.5f);
+        Destroy(gameObject);
+
+    }
+
+    IEnumerator ActivarDisparo()
+    {
+        yield return new WaitForSeconds(2f);
+        ShootEnemie();
+    }
+
+
 
 }
